@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolt Files</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #150a2b;
+            font-family: 'Lexend', sans-serif;
+        }
+
+        #upload-container {
+            background-color: #180c2d;
+            padding: 20px;
+            border: 1px solid #322845;
+            border-radius: 18px;
+            color: white;
+            box-shadow: 0 2px 8px rgb(42, 26, 56, 0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            margin-right: 35px;
+            margin-left: 35px;
+        }
+
+        #upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #file-input {
+            padding: 10px;
+            border: 1px solid #322845;
+            border-radius: 8px;
+            background-color: #150a2b;
+            color: white;
+        }
+
+        #file-name {
+            padding: 10px;
+            border: 1px solid #322845;
+            border-radius: 8px;
+            background-color: #150a2b;
+            color: white;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: #6f1ba7;
+            color: white;
+            cursor: pointer;
+            font-family: 'Roboto Slab', sans-serif;
+            font-size: 18px;
+        }
+
+        button:hover {
+            background-color: #8a2ccf;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('upload-form');
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const fileInput = document.getElementById('file-input');
+                const fileNameInput = document.getElementById('file-name');
+                const file = fileInput.files[0];
+                const fileName = fileNameInput.value || file.name;
+
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('fileName', fileName);
+
+                try {
+                    const response = await fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+                    alert('File uploaded successfully! Access it at: ' + data.url);
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                    alert('Failed to upload file. Please try again.');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="upload-container">
+        <h1>Upload your file</h1>
+        <form id="upload-form" enctype="multipart/form-data">
+            <input type="file" id="file-input" name="file" required>
+            <input type="text" id="file-name" name="fileName" placeholder="File Name" required>
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+</body>
+</html>
